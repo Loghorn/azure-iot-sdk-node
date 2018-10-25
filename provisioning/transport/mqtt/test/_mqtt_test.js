@@ -77,6 +77,15 @@ describe('Mqtt', function () {
     invoke: function(callback) { mqtt.queryOperationStatus(fakeRequest, fakeOperationId, callback); }
   };
 
+  describe('use symmetric key setSasToken', function() {
+    it('setSasToken', function(callback) {
+      var fakeSas = 'fake sas';
+      mqtt.setSasToken(fakeSas);
+      assert(mqtt._sasToken, fakeSas);
+      callback();
+    });
+  });
+
   describe('connecting', function() {
 
     /* Tests_SRS_NODE_PROVISIONING_MQTT_18_002: [ If the transport is not connected, `registrationRequest` shall connect it and subscribe to the response topic.] */

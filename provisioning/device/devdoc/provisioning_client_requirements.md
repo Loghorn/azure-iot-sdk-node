@@ -30,4 +30,8 @@ return an `X509Registration` object. **]**
 
 **SRS_PROVISIONING_CLIENT_18_004: [** If `securityClient` implements `TPMSecurityClient` and the `transport` dos not implement `TPMProvisioningTransport`, then `create` shall throw an `ArgumentError` exception. **]**
 
-**SRS_PROVISIONING_CLIENT_18_005: [** If `securityClient` dos not implement `X509ProvisioningTransport` or `TPMProvisioningTransport`, then `create` shall show an `ArgumentError` exception. **]**
+**SRS_PROVISIONING_CLIENT_06_003: [** If `securityClient` implements `SymmetricKeySecurityClient` and the `transport` implements `SymmetricKeyProvisioningTransport`, then `create` shall return an `SymmetricKeyRegistration` object. **]**
+
+**SRS_PROVISIONING_CLIENT_06_004: [** If `securityClient` implements `SymmetricKeySecurityClient` and the `transport` does not implement `SymmetricKeyProvisioningTransport`, then `create` shall throw an `ArgumentError` exception. **]**
+
+**SRS_PROVISIONING_CLIENT_18_005: [** If `securityClient` dos not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. **]**

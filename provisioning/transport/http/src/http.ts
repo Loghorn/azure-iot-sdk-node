@@ -6,7 +6,7 @@
 import { EventEmitter } from 'events';
 import { HttpTransportError, RestApiClient, Http as Base } from 'azure-iot-http-base';
 import { X509, errors } from 'azure-iot-common';
-import { X509ProvisioningTransport, TpmProvisioningTransport } from 'azure-iot-provisioning-device';
+import { X509ProvisioningTransport, TpmProvisioningTransport, SymmetricKeyProvisioningTransport } from 'azure-iot-provisioning-device';
 import { RegistrationRequest, DeviceRegistrationResult } from 'azure-iot-provisioning-device';
 import { ProvisioningDeviceConstants, ProvisioningTransportOptions } from 'azure-iot-provisioning-device';
 import { translateError } from 'azure-iot-provisioning-device';
@@ -21,7 +21,7 @@ const _defaultHeaders = {
 /**
  * Transport used to provision a device over HTTP.
  */
-export class Http extends EventEmitter implements X509ProvisioningTransport, TpmProvisioningTransport {
+export class Http extends EventEmitter implements X509ProvisioningTransport, TpmProvisioningTransport, SymmetricKeyProvisioningTransport {
   private _restApiClient: RestApiClient;
   private _httpBase: Base;
   private _config: ProvisioningTransportOptions = {};
@@ -109,6 +109,14 @@ export class Http extends EventEmitter implements X509ProvisioningTransport, Tpm
   setAuthentication(auth: X509): void {
     this._auth = auth;
   }
+
+  /**
+   * @private
+   */
+  setSasToken(sasToken: string): void {
+    this._sasToken = sasToken;
+  }
+
 
   /**
    * @private
