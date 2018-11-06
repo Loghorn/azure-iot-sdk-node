@@ -11,7 +11,7 @@ import * as async from 'async';
 const debug = dbg('azure-iot-provisioning-device-amqp:Amqp');
 
 import { X509, errors } from 'azure-iot-common';
-import { ProvisioningTransportOptions, X509ProvisioningTransport, TpmProvisioningTransport, RegistrationRequest, RegistrationResult, ProvisioningDeviceConstants } from 'azure-iot-provisioning-device';
+import { ProvisioningTransportOptions, X509ProvisioningTransport, TpmProvisioningTransport, SymmetricKeyProvisioningTransport, RegistrationRequest, RegistrationResult, ProvisioningDeviceConstants } from 'azure-iot-provisioning-device';
 import { Amqp as Base, SenderLink, ReceiverLink, AmqpMessage, AmqpBaseTransportConfig } from 'azure-iot-amqp-base';
 import { GetSasTokenCallback, SaslTpm } from './sasl_tpm';
 
@@ -37,11 +37,12 @@ enum DeviceOperations {
 /**
  * Transport used to provision a device over AMQP.
  */
-export class Amqp extends EventEmitter implements X509ProvisioningTransport, TpmProvisioningTransport {
+export class Amqp extends EventEmitter implements X509ProvisioningTransport, TpmProvisioningTransport, SymmetricKeyProvisioningTransport {
   private _amqpBase: Base;
   private _config: ProvisioningTransportOptions = {};
   private _amqpStateMachine: machina.Fsm;
   private _x509Auth: X509;
+  private _sasToken: string;
   private _endorsementKey: Buffer;
   private _storageRootKey: Buffer;
   private _customSaslMechanism: SaslTpm;
@@ -125,11 +126,23 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
           _onEnter: (request, callback) => {
             /*Codes_SRS_NODE_PROVISIONING_AMQP_16_002: [The `registrationRequest` method shall connect the AMQP client with the certificate and key given in the `auth` parameter of the previously called `setAuthentication` method.]*/
             /*Codes_SRS_NODE_PROVISIONING_AMQP_16_012: [The `queryOperationStatus` method shall connect the AMQP client with the certificate and key given in the `auth` parameter of the previously called `setAuthentication` method. **]**]*/
-            const config: AmqpBaseTransportConfig = {
+            let config: AmqpBaseTransportConfig = {
               uri: this._getConnectionUri(request),
               sslOptions: this._x509Auth,
               userAgentString: ProvisioningDeviceConstants.userAgent
             };
+            if (this._sasToken) {
+              /*Codes_SRS_NODE_PROVISIONING_AMQP_06_002: [** The `registrationRequest` method shall connect the amqp client, if utilizing the passed in sas token from setSasToken, shall in the connect options set the username to:
+                ```
+                <scopeId>/registrations/<registrationId>
+                ```
+                and shall set the password to the passed in sas token.
+                ] */
+              config.policyOverride = {
+                username: request.idScope + '/registrations/' + request.registrationId,
+                password: this._sasToken
+              };
+            }
             this._amqpBase.connect(config, (err) => {
               if (err) {
                 debug('_amqpBase.connect failed');
@@ -424,6 +437,14 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
   setAuthentication(auth: X509): void {
     /*Codes_SRS_NODE_PROVISIONING_AMQP_16_001: [The certificate and key passed as properties of the `auth` argument shall be used to connect to the Device Provisioning Service endpoint, when a registration request or registration operation status request are made.]*/
     this._x509Auth = auth;
+  }
+
+  /**
+   * @private
+   */
+  setSasToken(sasToken: string): void {
+    /*Codes_SRS_NODE_PROVISIONING_AMQP_06_001: [ The sas token passed shall be saved into the current transport object. ] */
+    this._sasToken = sasToken;
   }
 
   /**

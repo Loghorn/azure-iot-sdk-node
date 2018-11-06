@@ -33,7 +33,7 @@ var registry = Registry.fromConnectionString(registryConnectionString);
 var X509IndividualTransports = [ Http, Amqp, AmqpWs, Mqtt, MqttWs ];
 var X509GroupTransports = [ Http, Amqp, Mqtt, MqttWs ]; // AmqpWs is disabled because of an occasional ECONNRESET error when closing the socket. See Task 2233264.
 var TpmIndividualTransports = [ Http, Amqp, AmqpWs ];
-var SymmetricKeyIndividualTransports = [ Http, Mqtt, MqttWs  ];
+var SymmetricKeyIndividualTransports = [ Http, Amqp, AmqpWs, Mqtt, MqttWs ];
 
 var rootCert = {
   cert: new Buffer(process.env.IOT_PROVISIONING_ROOT_CERT,"base64").toString('ascii'),

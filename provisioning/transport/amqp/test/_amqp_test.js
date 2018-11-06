@@ -87,6 +87,32 @@ describe('Amqp', function () {
     amqp = null;
   });
 
+  describe('Symmetric Key', function() {
+    /*Tests_SRS_NODE_PROVISIONING_AMQP_06_001: [ The sas token passed shall be saved into the current transport object. ] */
+    it('setSasToken', function(callback) {
+      var fakeSas = 'fake sas';
+      amqp.setSasToken(fakeSas);
+      assert(amqp._sasToken, fakeSas);
+      callback();
+    });
+    it('Shall set username and password on connect', function(callback) {
+      /*Codes_SRS_NODE_PROVISIONING_AMQP_06_002: [** The `registrationRequest` method shall connect the amqp client, if utilizing the passed in sas token from setSasToken, shall in the connect options set the username to:
+        ```
+        <scopeId>/registrations/<registrationId>
+        ```
+        and shall set the password to the passed in sas token.
+        ] */
+        var fakeSas = 'fake sas';
+      amqp.setSasToken(fakeSas);
+      amqp.registrationRequest(fakeRequest, function() {
+        assert.isTrue(fakeAmqpBase.connect.calledOnce);
+        assert.equal(fakeAmqpBase.connect.firstCall.args[0].policyOverride.username, fakeRequest.idScope + '/registrations/' + fakeRequest.registrationId);
+        assert.equal(fakeAmqpBase.connect.firstCall.args[0].policyOverride.password, fakeSas);
+        callback();
+      })
+    });
+  });
+
   describe('X509', function () {
     beforeEach(function() {
       amqp.setAuthentication({
