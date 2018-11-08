@@ -21,9 +21,9 @@ The `register` method completes the authentication and registration flow for the
 
 **SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_007: [** If the `getRegistrationId` fails, the `register` shall call the `_callback` with the error. **]**
 
-**SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [** `register` shall invoke `CreateSharedAccessSignature` method on the security object to acquire a sas token object. **]**
+**SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [** `register` shall invoke `createSharedAccessSignature` method on the security object to acquire a sas token object. **]**
 
-**SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [** If the `CreateSharedAccessSignature` fails, the `register` shall call the `_callback` with the error. **]**
+**SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [** If the `createSharedAccessSignature` fails, the `register` shall call the `_callback` with the error. **]**
 
 **SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_004: [** `register` shall pass the SAS into the `setSharedAccessSignature` method on the transport. **]**
 

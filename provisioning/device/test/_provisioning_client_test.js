@@ -35,7 +35,7 @@ var fakeTpmSecurity = {
 
 var fakeSymmetricKeySecurity = {
   getRegistrationId: function() {},
-  CreateSharedAccessSignature: function() {}
+  createSharedAccessSignature: function() {}
 };
 
 var fakeInvalidSecurity = {};

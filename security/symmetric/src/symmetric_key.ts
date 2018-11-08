@@ -33,7 +33,7 @@ export class SymmetricKeySecurityClient  {
   }
 
   /**
-   * @method           module:azure-iot-security-symmetric-key.SymmetricKeySecurityClient#CreateSharedAccessSignature
+   * @method           module:azure-iot-security-symmetric-key.SymmetricKeySecurityClient#createSharedAccessSignature
    * @description      Returns a SAS token constructed from an id scope and the symmetric key
    *
    * @param {string}            idScope         Used to provide scope into the dps instance.
@@ -41,7 +41,7 @@ export class SymmetricKeySecurityClient  {
    *                                            If the err argument is non-null then the sas token
    *                                            parameter will be undefined.
    */
-  CreateSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void {
+  createSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void {
     return callbackToPromise((_callback) => {
       /*Codes_SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [Will throw `ReferenceError` if `idScope` parameter is falsy. ] */
       if (!idScope) {

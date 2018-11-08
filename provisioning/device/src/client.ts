@@ -52,7 +52,7 @@ export class ProvisioningDeviceClient {
     const isX509Transport: boolean = ((transport as X509ProvisioningTransport).setAuthentication !== undefined);
     const isTpmSecurity: boolean = ((securityClient as TpmSecurityClient).getEndorsementKey !== undefined);
     const isTpmTransport: boolean = ((transport as TpmProvisioningTransport).getAuthenticationChallenge !== undefined);
-    const isSymmetricKeySecurity: boolean = ((securityClient as SymmetricKeySecurityClient).CreateSharedAccessSignature !== undefined);
+    const isSymmetricKeySecurity: boolean = ((securityClient as SymmetricKeySecurityClient).createSharedAccessSignature !== undefined);
     const isSymmetricKeyTransport: boolean = ((transport as SymmetricKeyProvisioningTransport).setSharedAccessSignature !== undefined);
 
     if (isX509Security) {

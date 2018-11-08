@@ -202,5 +202,5 @@ export interface SymmetricKeyProvisioningTransport extends PollingTransport {
  */
 export interface SymmetricKeySecurityClient {
   getRegistrationId(callback?: Callback<string>): Promise<string> | void;
-  CreateSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void;
+  createSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void;
 }

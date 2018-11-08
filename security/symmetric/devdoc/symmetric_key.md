@@ -16,7 +16,7 @@ The `SymmetricKeySecurityClient` constructor initializes a new instance of a `Sy
 
 **SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_004: [** This function returns the `registrationId` for the particular device. **]**
 
-### CreateSharedAccessSignature(idScope: string, callback: (err: Error, sasTokenObject: SharedAccessSignature)) => void): void
+### createSharedAccessSignature(idScope: string, callback: (err: Error, sasTokenObject: SharedAccessSignature)) => void): void
 
 **SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [** Will throw `ReferenceError` if `idScope` parameter is falsy. **]**
 

@@ -6,9 +6,6 @@ var ArgumentError = require('azure-iot-common').errors.ArgumentError;
 var SymmetricKeySecurityClient  = require('../lib/symmetric_key').SymmetricKeySecurityClient ;
 var sinon = require('sinon');
 var assert = require('chai').assert;
-var crypto = require("crypto");
-var equals = require('array-equal');
-
 
 describe('symmetric key', function () {
   describe('getRegistrationId', function() {
@@ -24,7 +21,7 @@ describe('symmetric key', function () {
     });
   });
 
-  describe('CreateSharedAccessSignature', function() {
+  describe('createSharedAccessSignature', function() {
     /*Tests_SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [Will throw `ReferenceError` if `idScope` parameter is falsy. ] */
     [undefined, null, ''].forEach(function (badIdScope) {
       it('throws if idScope is \'' + badIdScope +'\'', function () {
@@ -32,7 +29,7 @@ describe('symmetric key', function () {
         var fakeSymmetricKey = 'fakeKey';
         var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
         assert.throws(function () {
-          client.CreateSharedAccessSignature(badIdScope, function () {});
+          client.createSharedAccessSignature(badIdScope, function () {});
         }, ReferenceError, '');
       });
     });
@@ -44,7 +41,7 @@ describe('symmetric key', function () {
         var fakeSymmetricKey = 'fakeKey';
         var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
         assert.throws(function () {
-          client.CreateSharedAccessSignature(badIdScope, function () {});
+          client.createSharedAccessSignature(badIdScope, function () {});
         }, ArgumentError, '');
       });
     });
@@ -55,7 +52,7 @@ describe('symmetric key', function () {
       var fakeSymmetricKey = 'fakeKey';
       var fakeIdScope = 'fakeScope';
       var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
-      client.CreateSharedAccessSignature(fakeIdScope, function(err, sasTokenObject) {
+      client.createSharedAccessSignature(fakeIdScope, function(err, sasTokenObject) {
         assert.isNotOk(err);
         assert.equal(sasTokenObject.sr, fakeIdScope + '/registrations/' + fakeRegistrationId);
         assert.equal(sasTokenObject.skn, 'registration');
