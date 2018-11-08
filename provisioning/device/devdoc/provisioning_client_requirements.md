@@ -4,13 +4,6 @@
 
 The `ProvisioningDeviceClient` class is the factory object used by clients to create a registration clients.
 
-## Example usage
-
-```js
-// TODO once all the pieces are there in the SDK
-
-```
-
 ## Public API
 
 ### create(provisioningHost, idScope, transport, securityClient)
@@ -34,4 +27,4 @@ return an `X509Registration` object. **]**
 
 **SRS_PROVISIONING_CLIENT_06_004: [** If `securityClient` implements `SymmetricKeySecurityClient` and the `transport` does not implement `SymmetricKeyProvisioningTransport`, then `create` shall throw an `ArgumentError` exception. **]**
 
-**SRS_PROVISIONING_CLIENT_18_005: [** If `securityClient` dos not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. **]**
+**SRS_PROVISIONING_CLIENT_18_005: [** If `securityClient` does not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. **]**

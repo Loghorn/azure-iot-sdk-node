@@ -42,7 +42,7 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
   private _config: ProvisioningTransportOptions = {};
   private _amqpStateMachine: machina.Fsm;
   private _x509Auth: X509;
-  private _sasToken: string;
+  private _sas: string;
   private _endorsementKey: Buffer;
   private _storageRootKey: Buffer;
   private _customSaslMechanism: SaslTpm;
@@ -94,7 +94,7 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
           },
           registrationRequest: (request, correlationId, callback) => {
             this._operations[correlationId] = callback;
-            this._amqpStateMachine.transition('connectingX509', request, (err) => {
+            this._amqpStateMachine.transition('connectingX509OrSymmetric', request, (err) => {
               if (err) {
                 delete this._operations[correlationId];
                 callback(err);
@@ -105,7 +105,7 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
           },
           queryOperationStatus: (request, correlationId, operationId, callback) => {
             this._operations[correlationId] = callback;
-            this._amqpStateMachine.transition('connectingX509', request, (err) => {
+            this._amqpStateMachine.transition('connectingX509OrSymmetric', request, (err) => {
               if (err) {
                 delete this._operations[correlationId];
                 callback(err);
@@ -122,7 +122,7 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
           /*Codes_SRS_NODE_PROVISIONING_AMQP_16_022: [`disconnect` shall call its callback immediately if the AMQP connection is disconnected.]*/
           disconnect: (callback) => callback()
         },
-        connectingX509: {
+        connectingX509OrSymmetric: {
           _onEnter: (request, callback) => {
             /*Codes_SRS_NODE_PROVISIONING_AMQP_16_002: [The `registrationRequest` method shall connect the AMQP client with the certificate and key given in the `auth` parameter of the previously called `setAuthentication` method.]*/
             /*Codes_SRS_NODE_PROVISIONING_AMQP_16_012: [The `queryOperationStatus` method shall connect the AMQP client with the certificate and key given in the `auth` parameter of the previously called `setAuthentication` method. **]**]*/
@@ -131,8 +131,8 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
               sslOptions: this._x509Auth,
               userAgentString: ProvisioningDeviceConstants.userAgent
             };
-            if (this._sasToken) {
-              /*Codes_SRS_NODE_PROVISIONING_AMQP_06_002: [** The `registrationRequest` method shall connect the amqp client, if utilizing the passed in sas token from setSasToken, shall in the connect options set the username to:
+            if (this._sas) {
+              /*Codes_SRS_NODE_PROVISIONING_AMQP_06_002: [** The `registrationRequest` method shall connect the amqp client, if utilizing the passed in sas from setSharedAccessSignature, shall in the connect options set the username to:
                 ```
                 <scopeId>/registrations/<registrationId>
                 ```
@@ -140,7 +140,7 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
                 ] */
               config.policyOverride = {
                 username: request.idScope + '/registrations/' + request.registrationId,
-                password: this._sasToken
+                password: this._sas
               };
             }
             this._amqpBase.connect(config, (err) => {
@@ -442,9 +442,9 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
   /**
    * @private
    */
-  setSasToken(sasToken: string): void {
-    /*Codes_SRS_NODE_PROVISIONING_AMQP_06_001: [ The sas token passed shall be saved into the current transport object. ] */
-    this._sasToken = sasToken;
+  setSharedAccessSignature(sas: string): void {
+    /*Codes_SRS_NODE_PROVISIONING_AMQP_06_001: [ The sas passed shall be saved into the current transport object. ] */
+    this._sas = sas;
   }
 
   /**

@@ -1,14 +1,14 @@
-# azure-iot-security-symmetric-key.SemmetricKeySecurityClient Requirements
+# azure-iot-security-symmetric-key.SymmetricKeySecurityClient Requirements
 
 ## Overview
 `SymmetricKeySecurityClient` provides query operations for symmetric key based attestation and a sas token object.
 
 ## Example usage
 
-var securityClient = new symmetricKeySecurity.SymmeticKeySecurityClient();
+var securityClient = new symmetricKeySecurity.SymmetricKeySecurityClient();
 var provisioningClient = ProvisioningDeviceClient.create(provisioningHost, idScope, new provisioningTransport(), securityClient);
 
-### SymmetricKeySecurityClient(symmetricKey: string, registrationId: string) [constructor]
+### SymmetricKeySecurityClient(registrationId: string, symmetricKey: string) [constructor]
 
 The `SymmetricKeySecurityClient` constructor initializes a new instance of a `SymmetricKeySecurityClient` object.
 
@@ -16,7 +16,7 @@ The `SymmetricKeySecurityClient` constructor initializes a new instance of a `Sy
 
 **SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_004: [** This function returns the `registrationId` for the particular device. **]**
 
-### createAuthenticationToken(idScope: string, callback: (err: Error, sasTokenObject: SharedAccessSignature)) => void): void
+### CreateSharedAccessSignature(idScope: string, callback: (err: Error, sasTokenObject: SharedAccessSignature)) => void): void
 
 **SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [** Will throw `ReferenceError` if `idScope` parameter is falsy. **]**
 

@@ -306,11 +306,11 @@ describe('Http', function() {
     });
   });
 
-  describe('use symmetric key setSasToken', function() {
-    it('setSasToken', function(callback) {
+  describe('use symmetric key setSharedAccessSignature', function() {
+    it('setSharedAccessSignature', function(callback) {
       var fakeSas = 'fake sas';
-      http.setSasToken(fakeSas);
-      assert(http._sasToken, fakeSas);
+      http.setSharedAccessSignature(fakeSas);
+      assert(http._sas, fakeSas);
       callback();
     });
   });

@@ -50,14 +50,14 @@ export class SymmetricKeyRegistration implements RegistrationClient {
             provisioningHost: this._provisioningHost,
             idScope: this._idScope
           };
-          /*Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [ `register` shall invoke `createAuthenticationToken` method on the security object to acquire a sas token object. ] */
-          this._securityClient.createAuthenticationToken(this._idScope, (createTokenError, token) => {
-            /*Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [ If the `createAuthenticationToken` fails, the `register` shall call the `_callback` with the error. ] */
-            if (createTokenError) {
-              _callback(createTokenError);
+          /*Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [ `register` shall invoke `CreateSharedAccessSignature` method on the security object to acquire a sas token object. ] */
+          this._securityClient.CreateSharedAccessSignature(this._idScope, (createSasError, sas) => {
+            /*Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [ If the `CreateSharedAccessSignature` fails, the `register` shall call the `_callback` with the error. ] */
+            if (createSasError) {
+              _callback(createSasError);
             } else {
-              /* Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_004: [ `register` shall pass the SAS token into the `setSasToken` method on the transport. ] */
-              this._transport.setSasToken(token.toString());
+              /* Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_004: [ `register` shall pass the SAS into the `setSharedAccessSignature` method on the transport. ] */
+              this._transport.setSharedAccessSignature(sas.toString());
               /* Codes_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_005: [ `register` shall call `register` on the polling state machine object. ] */
               this._pollingStateMachine.register(request, (registerError?: Error, result?: DeviceRegistrationResult) => {
                 this._pollingStateMachine.disconnect((disconnectErr: Error) => {

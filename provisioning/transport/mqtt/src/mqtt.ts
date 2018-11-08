@@ -30,7 +30,7 @@ export class Mqtt extends EventEmitter implements X509ProvisioningTransport, Sym
   private _config: ProvisioningTransportOptions = {};
   private _fsm: machina.Fsm;
   private _auth: X509;
-  private _sasToken: string;
+  private _sas: string;
   private _subscribed: boolean;
 
   private _operations: {
@@ -257,8 +257,8 @@ export class Mqtt extends EventEmitter implements X509ProvisioningTransport, Sym
   /**
    * @private
    */
-  setSasToken(sasToken: string): void {
-    this._sasToken = sasToken;
+  setSharedAccessSignature(sas: string): void {
+    this._sas = sas;
   }
 
   protected _getConnectionUri(request: RegistrationRequest): string {
@@ -277,7 +277,7 @@ export class Mqtt extends EventEmitter implements X509ProvisioningTransport, Sym
       clientId: request.registrationId,
       clean: true,
       x509: this._auth,
-      sharedAccessSignature: this._sasToken,
+      sharedAccessSignature: this._sas,
       username: request.idScope + '/registrations/' + request.registrationId + '/api-version=' + ProvisioningDeviceConstants.apiVersion + '&ClientVersion=' + encodeURIComponent(ProvisioningDeviceConstants.userAgent),
       uri: this._getConnectionUri(request)
     };

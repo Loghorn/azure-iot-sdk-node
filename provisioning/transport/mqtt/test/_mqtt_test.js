@@ -77,11 +77,11 @@ describe('Mqtt', function () {
     invoke: function(callback) { mqtt.queryOperationStatus(fakeRequest, fakeOperationId, callback); }
   };
 
-  describe('use symmetric key setSasToken', function() {
-    it('setSasToken', function(callback) {
+  describe('use symmetric key setSharedAccessSignature', function() {
+    it('setSharedAccessSignature', function(callback) {
       var fakeSas = 'fake sas';
-      mqtt.setSasToken(fakeSas);
-      assert(mqtt._sasToken, fakeSas);
+      mqtt.setSharedAccessSignature(fakeSas);
+      assert(mqtt._sas, fakeSas);
       callback();
     });
   });

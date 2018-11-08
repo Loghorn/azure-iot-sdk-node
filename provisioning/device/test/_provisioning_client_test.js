@@ -35,7 +35,7 @@ var fakeTpmSecurity = {
 
 var fakeSymmetricKeySecurity = {
   getRegistrationId: function() {},
-  createAuthenticationToken: function() {}
+  CreateSharedAccessSignature: function() {}
 };
 
 var fakeInvalidSecurity = {};
@@ -53,7 +53,7 @@ var fakeTpmTransport = {
 };
 
 var fakeSymmetricKeyTransport = {
-  setSasToken: function() {}
+  setSharedAccessSignature: function() {}
 };
 
 var fakeProvisioningHost = 'fake_host';
@@ -121,7 +121,7 @@ describe('ProvisioningDeviceClient', function () {
       }, errors.ArgumentError);
     });
 
-    /* Tests_SRS_PROVISIONING_CLIENT_18_005: [ If `securityClient` dos not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. ] */
+    /* Tests_SRS_PROVISIONING_CLIENT_18_005: [ If `securityClient` does not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. ] */
     it ('throws when passed an invalid securityClient object', function() {
       assert.throws(function() {
         ProvisioningDeviceClient.create(fakeProvisioningHost, fakeIdScope, fakeTpmTransport, fakeInvalidSecurity);

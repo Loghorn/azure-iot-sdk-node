@@ -362,7 +362,7 @@ var SymmetricKeyIndividual = function() {
     self.deviceId = 'deleteme_provisioning_node_e2e_' + id;
     self.registrationId = 'reg-' + id;
     self.primaryKey = new Buffer(uuid.v4()).toString('base64');
-    securityClient = new SymmetricKeySecurityClient(self.primaryKey, self.registrationId);
+    securityClient = new SymmetricKeySecurityClient(self.registrationId, self.primaryKey);
     callback();
   };
 

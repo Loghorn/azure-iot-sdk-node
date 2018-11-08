@@ -193,7 +193,7 @@ export interface TpmSecurityClient {
  * @private
  */
 export interface SymmetricKeyProvisioningTransport extends PollingTransport {
-  setSasToken(sasToken: string): void;
+  setSharedAccessSignature(sas: string): void;
 }
 
 /**
@@ -202,5 +202,5 @@ export interface SymmetricKeyProvisioningTransport extends PollingTransport {
  */
 export interface SymmetricKeySecurityClient {
   getRegistrationId(callback?: Callback<string>): Promise<string> | void;
-  createAuthenticationToken(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void;
+  CreateSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void;
 }

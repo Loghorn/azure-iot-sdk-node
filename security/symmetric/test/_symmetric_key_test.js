@@ -15,7 +15,7 @@ describe('symmetric key', function () {
     it('returns the registrationId', function(done) {
       var fakeRegistrationId = 'registrationId';
       var fakeSymmetricKey = 'fakeKey';
-      var client = new SymmetricKeySecurityClient(fakeSymmetricKey, fakeRegistrationId);
+      var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
       client.getRegistrationId(function(err, returnedId) {
         assert.isNotOk(err);
         assert.equal(returnedId, fakeRegistrationId);
@@ -24,15 +24,15 @@ describe('symmetric key', function () {
     });
   });
 
-  describe('createAuthenticationToken', function() {
+  describe('CreateSharedAccessSignature', function() {
     /*Tests_SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [Will throw `ReferenceError` if `idScope` parameter is falsy. ] */
     [undefined, null, ''].forEach(function (badIdScope) {
       it('throws if idScope is \'' + badIdScope +'\'', function () {
         var fakeRegistrationId = 'registrationId';
         var fakeSymmetricKey = 'fakeKey';
-        var client = new SymmetricKeySecurityClient(fakeSymmetricKey, fakeRegistrationId);
+        var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
         assert.throws(function () {
-          client.createAuthenticationToken(badIdScope, function () {});
+          client.CreateSharedAccessSignature(badIdScope, function () {});
         }, ReferenceError, '');
       });
     });
@@ -42,9 +42,9 @@ describe('symmetric key', function () {
       it('throws if idScope is \'' + badIdScope +'\'', function () {
         var fakeRegistrationId = 'registrationId';
         var fakeSymmetricKey = 'fakeKey';
-        var client = new SymmetricKeySecurityClient(fakeSymmetricKey, fakeRegistrationId);
+        var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
         assert.throws(function () {
-          client.createAuthenticationToken(badIdScope, function () {});
+          client.CreateSharedAccessSignature(badIdScope, function () {});
         }, ArgumentError, '');
       });
     });
@@ -54,8 +54,8 @@ describe('symmetric key', function () {
       var fakeRegistrationId = 'registrationId';
       var fakeSymmetricKey = 'fakeKey';
       var fakeIdScope = 'fakeScope';
-      var client = new SymmetricKeySecurityClient(fakeSymmetricKey, fakeRegistrationId);
-      client.createAuthenticationToken(fakeIdScope, function(err, sasTokenObject) {
+      var client = new SymmetricKeySecurityClient(fakeRegistrationId, fakeSymmetricKey);
+      client.CreateSharedAccessSignature(fakeIdScope, function(err, sasTokenObject) {
         assert.isNotOk(err);
         assert.equal(sasTokenObject.sr, fakeIdScope + '/registrations/' + fakeRegistrationId);
         assert.equal(sasTokenObject.skn, 'registration');

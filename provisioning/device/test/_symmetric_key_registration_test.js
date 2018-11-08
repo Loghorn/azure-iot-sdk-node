@@ -22,16 +22,16 @@ describe('Symmetric Key Registration', function () {
   describe('#register', function () {
 
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_006: [ `register` shall call the `getRegistrationId` method on the security object to acquire the registration id. ] */
-    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [ `register` shall invoke `createAuthenticationToken` method on the security object to acquire a sas token object. ] */
-    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_004: [ `register` shall pass the SAS token into the `setSasToken` method on the transport. ] */
+    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_008: [ `register` shall invoke `CreateSharedAccessSignature` method on the security object to acquire a sas token object. ] */
+    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_004: [ `register` shall pass the SAS into the `setSharedAccessSignature` method on the transport. ] */
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_005: [ `register` shall call `register` on the polling state machine object. ] */
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_011: [ Otherwise `register` shall invoke the `_callback` with the resultant `registrationState` as the second argument. ] */
     it('gets the registration id and consequent sas token and registers', function(callback) {
       var transport = {
-        setSasToken: sinon.spy(),
+        setSharedAccessSignature: sinon.spy(),
       };
       var security = {
-        createAuthenticationToken: sinon.stub().callsArgWith(1, null, fakeSasToken),
+        CreateSharedAccessSignature: sinon.stub().callsArgWith(1, null, fakeSasToken),
         getRegistrationId: sinon.stub().callsArgWith(0, null, fakeRegistrationId)
       };
       var clientObj = new SymmetricKeyRegistration(fakeProvisioningHost, fakeIdScope, transport, security);
@@ -45,20 +45,20 @@ describe('Symmetric Key Registration', function () {
         assert.strictEqual(clientObj._pollingStateMachine.register.firstCall.args[0].idScope, fakeIdScope);
         assert.strictEqual(clientObj._pollingStateMachine.register.firstCall.args[0].registrationId, fakeRegistrationId);
         assert(security.getRegistrationId.calledOnce);
-        assert(security.createAuthenticationToken.calledOnce);
-        assert(transport.setSasToken.calledOnce);
-        assert.strictEqual(transport.setSasToken.firstCall.args[0], fakeSasToken);
+        assert(security.CreateSharedAccessSignature.calledOnce);
+        assert(transport.setSharedAccessSignature.calledOnce);
+        assert.strictEqual(transport.setSharedAccessSignature.firstCall.args[0], fakeSasToken);
         callback();
       });
     });
 
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_007: [ If the `getRegistrationId` fails, the `register` shall call the `_callback` with the error. ] */
-    it('fails if getRegisterId fails', function(callback) {
+    it('fails if getRegistrationId fails', function(callback) {
       var transport = {
-        setSasToken: sinon.spy(),
+        setSharedAccessSignature: sinon.spy(),
       };
       var security = {
-        createAuthenticationToken: sinon.stub().callsArgWith(1, null, fakeSasToken),
+        CreateSharedAccessSignature: sinon.stub().callsArgWith(1, null, fakeSasToken),
         getRegistrationId: sinon.stub().callsArgWith(0, new Error())
       };
       var clientObj = new SymmetricKeyRegistration(fakeProvisioningHost, fakeIdScope, transport, security);
@@ -69,19 +69,19 @@ describe('Symmetric Key Registration', function () {
       });
     });
 
-    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [ If the `createAuthenticationToken` fails, the `register` shall call the `_callback` with the error. ] */
-    it('fails if createAuthenticationToken fails', function(callback) {
+    /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_009: [ If the `CreateSharedAccessSignature` fails, the `register` shall call the `_callback` with the error. ] */
+    it('fails if CreateSharedAccessSignature fails', function(callback) {
       var transport = {
-        setSasToken: sinon.spy(),
+        setSharedAccessSignature: sinon.spy(),
       };
       var fakeError = new Error('got a token create Error');
       var security = {
-        createAuthenticationToken: sinon.stub().callsArgWith(1, fakeError),
+        CreateSharedAccessSignature: sinon.stub().callsArgWith(1, fakeError),
         getRegistrationId: sinon.stub().callsArgWith(0, null, fakeRegistrationId)
       };
       var clientObj = new SymmetricKeyRegistration(fakeProvisioningHost, fakeIdScope, transport, security);
       clientObj.register(function(err, response) {
-        assert(security.createAuthenticationToken.calledOnce);
+        assert(security.CreateSharedAccessSignature.calledOnce);
         assert.isOk(err);
         assert.strictEqual(fakeError, err);
         callback();
@@ -91,10 +91,10 @@ describe('Symmetric Key Registration', function () {
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_010: [ if the polling register returns an error, the `register` shall invoke the `_callback` with that error. ] */
     it('fails if register fails', function(callback) {
       var transport = {
-        setSasToken: sinon.spy(),
+        setSharedAccessSignature: sinon.spy(),
       };
       var security = {
-        createAuthenticationToken: sinon.stub().callsArgWith(1, null, fakeSasToken),
+        CreateSharedAccessSignature: sinon.stub().callsArgWith(1, null, fakeSasToken),
         getRegistrationId: sinon.stub().callsArgWith(0, null, fakeRegistrationId)
       };
       var fakeError = new Error('got a register Error');
@@ -111,10 +111,10 @@ describe('Symmetric Key Registration', function () {
     /* Tests_SRS_NODE_DPS_SYMMETRIC_REGISTRATION_06_010: [ if the polling register returns an error, the `register` shall invoke the `_callback` with that error. ] */
     it('disconnect failure does NOT affect results', function(callback) {
       var transport = {
-        setSasToken: sinon.spy(),
+        setSharedAccessSignature: sinon.spy(),
       };
       var security = {
-        createAuthenticationToken: sinon.stub().callsArgWith(1, null, fakeSasToken),
+        CreateSharedAccessSignature: sinon.stub().callsArgWith(1, null, fakeSasToken),
         getRegistrationId: sinon.stub().callsArgWith(0, null, fakeRegistrationId)
       };
       var fakeError = new Error('got a disconnect Error');

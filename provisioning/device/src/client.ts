@@ -52,8 +52,8 @@ export class ProvisioningDeviceClient {
     const isX509Transport: boolean = ((transport as X509ProvisioningTransport).setAuthentication !== undefined);
     const isTpmSecurity: boolean = ((securityClient as TpmSecurityClient).getEndorsementKey !== undefined);
     const isTpmTransport: boolean = ((transport as TpmProvisioningTransport).getAuthenticationChallenge !== undefined);
-    const isSymmetricKeySecurity: boolean = ((securityClient as SymmetricKeySecurityClient).createAuthenticationToken !== undefined);
-    const isSymmetricKeyTransport: boolean = ((transport as SymmetricKeyProvisioningTransport).setSasToken !== undefined);
+    const isSymmetricKeySecurity: boolean = ((securityClient as SymmetricKeySecurityClient).CreateSharedAccessSignature !== undefined);
+    const isSymmetricKeyTransport: boolean = ((transport as SymmetricKeyProvisioningTransport).setSharedAccessSignature !== undefined);
 
     if (isX509Security) {
       if (isX509Transport) {
@@ -81,7 +81,7 @@ export class ProvisioningDeviceClient {
         throw new errors.ArgumentError('Transport does not support SymmetricKey authentication');
       }
     } else {
-      /* Codes_SRS_PROVISIONING_CLIENT_18_005: [ If `securityClient` dos not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. ] */
+      /* Codes_SRS_PROVISIONING_CLIENT_18_005: [ If `securityClient` does not implement `X509SecurityClient`, `TPMSecurityClient`,  or `SymmetricKeySecurityClient` then `create` shall show an `ArgumentError` exception. ] */
       throw new errors.ArgumentError('Invalid security object');
     }
   }

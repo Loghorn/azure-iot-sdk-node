@@ -3,7 +3,7 @@
 
 'use strict';
 import { Callback, callbackToPromise, SharedAccessSignature, anHourFromNow } from 'azure-iot-common';
-import { ArgumentError } from 'azure-iot-common/lib/errors';
+import { errors } from 'azure-iot-common';
 
 /**
  * @private
@@ -12,11 +12,10 @@ export class SymmetricKeySecurityClient  {
 
   private _registrationId: string;
   private _symmetricKey: string;
-  private _sas: SharedAccessSignature;
 
-  constructor(symmetricKey: string, registrationId: string) {
-    this._symmetricKey = symmetricKey;
+  constructor(registrationId: string, symmetricKey: string) {
     this._registrationId = registrationId;
+    this._symmetricKey = symmetricKey;
   }
 
 
@@ -34,7 +33,7 @@ export class SymmetricKeySecurityClient  {
   }
 
   /**
-   * @method           module:azure-iot-security-symmetric-key.SymmetricKeySecurityClient#createAuthenticationToken
+   * @method           module:azure-iot-security-symmetric-key.SymmetricKeySecurityClient#CreateSharedAccessSignature
    * @description      Returns a SAS token constructed from an id scope and the symmetric key
    *
    * @param {string}            idScope         Used to provide scope into the dps instance.
@@ -42,7 +41,7 @@ export class SymmetricKeySecurityClient  {
    *                                            If the err argument is non-null then the sas token
    *                                            parameter will be undefined.
    */
-  createAuthenticationToken(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void {
+  CreateSharedAccessSignature(idScope: string, callback?: Callback<SharedAccessSignature>): Promise<SharedAccessSignature> | void {
     return callbackToPromise((_callback) => {
       /*Codes_SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_005: [Will throw `ReferenceError` if `idScope` parameter is falsy. ] */
       if (!idScope) {
@@ -50,10 +49,9 @@ export class SymmetricKeySecurityClient  {
       }
       /*Codes_SRS_NODE_SYMMETRIC_KEY_SECURITY_CLIENT_06_006: [The `idScope` parameter must be of type string.] */
       if (typeof idScope !== 'string') {
-        throw new ArgumentError('idScope must be of type string');
+        throw new errors.ArgumentError('idScope must be of type string');
       }
-      this._sas = SharedAccessSignature.create(idScope + '/registrations/' + this._registrationId, 'registration', this._symmetricKey, anHourFromNow());
-      _callback(null, this._sas);
+      _callback(null, SharedAccessSignature.create(idScope + '/registrations/' + this._registrationId, 'registration', this._symmetricKey, anHourFromNow()));
     }, callback);
   }
 }
