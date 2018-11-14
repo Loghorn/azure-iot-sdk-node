@@ -332,7 +332,7 @@ export class SenderLink extends EventEmitter implements AmqpLink {
               delete this._pendingMessageDictionary[context.delivery.id];
               /*Codes_SRS_NODE_AMQP_SENDER_LINK_16_012: [If the message cannot be sent the `callback` shall be called with an `Error` object describing the AMQP error reported by the service.] */
               if (op.callback) {
-                op.callback(context.delivery.remote_state.error);
+                op.callback(context.delivery.remote_state.error, new results.MessageRejected());
               }
             }
           },

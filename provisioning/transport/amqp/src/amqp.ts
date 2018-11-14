@@ -10,10 +10,11 @@ import * as uuid from 'uuid';
 import * as async from 'async';
 const debug = dbg('azure-iot-provisioning-device-amqp:Amqp');
 
-import { X509, errors } from 'azure-iot-common';
+import { X509, errors, results } from 'azure-iot-common';
 import { ProvisioningTransportOptions, X509ProvisioningTransport, TpmProvisioningTransport, RegistrationRequest, RegistrationResult, ProvisioningDeviceConstants } from 'azure-iot-provisioning-device';
-import { Amqp as Base, SenderLink, ReceiverLink, AmqpMessage, AmqpBaseTransportConfig } from 'azure-iot-amqp-base';
+import { Amqp as Base, SenderLink, ReceiverLink, AmqpMessage, AmqpBaseTransportConfig, translateError, AmqpTransportError } from 'azure-iot-amqp-base';
 import { GetSasTokenCallback, SaslTpm } from './sasl_tpm';
+
 
 /**
  * @private
@@ -283,11 +284,18 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
 
             debug('initial registration request: ' + JSON.stringify(requestMessage));
             this._operations[requestMessage.correlation_id] = callback;
-            this._senderLink.send(requestMessage, (err) => {
+            this._senderLink.send(requestMessage, (err, resultOfOperation) => {
               if (err) {
                 delete this._operations[requestMessage.correlation_id];
-                /*Codes_SRS_NODE_PROVISIONING_AMQP_16_011: [The `registrationRequest` method shall call its callback with an error if the transport fails to send the request message.]*/
-                callback(err);
+                const rejected = resultOfOperation instanceof results.MessageRejected;
+                const translatedError = rejected ? translateError('registration failure', err) : undefined;
+                if (rejected && ((translatedError instanceof errors.InternalServerError) || ((translatedError as AmqpTransportError) instanceof errors.ThrottlingError))) {
+                  /*Codes_SRS_NODE_PROVISIONING_AMQP_06_001: [ The `registrationRequest` disposition is an `instanceof` common errors InternalServerError or ThrottlingError, the result.status shall be set to 'assigning', and the callback invoked with *no* error. ] */
+                  callback(null, {status: 'assigning'});
+                } else {
+                  /*Codes_SRS_NODE_PROVISIONING_AMQP_16_011: [The `registrationRequest` method shall call its callback with an error if the transport fails to send the request message.]*/
+                  callback(err);
+                }
               } else {
                 debug('registration request sent with correlation_id: ' + requestMessage.correlation_id);
               }
@@ -309,11 +317,18 @@ export class Amqp extends EventEmitter implements X509ProvisioningTransport, Tpm
 
             debug('registration status request: ' + JSON.stringify(requestMessage));
             this._operations[requestMessage.correlation_id] = callback;
-            this._senderLink.send(requestMessage, (err) => {
+            this._senderLink.send(requestMessage, (err, resultOfOperation) => {
               if (err) {
                 delete this._operations[requestMessage.correlation_id];
-                /*Codes_SRS_NODE_PROVISIONING_AMQP_16_021: [The `queryOperationStatus` method shall call its callback with an error if the transport fails to send the request message.]*/
-                callback(err);
+                const rejected = resultOfOperation instanceof results.MessageRejected;
+                const translatedError = rejected ? translateError('registration failure', err) : undefined;
+                if (rejected && ((translatedError instanceof errors.InternalServerError) || ((translatedError as AmqpTransportError) instanceof errors.ThrottlingError))) {
+                  /*Codes_SRS_NODE_PROVISIONING_AMQP_06_002: [ The `queryOperationStatus` disposition is an `instanceof` common errors InternalServerError or ThrottlingError, the result.status shall be set to 'assigning', and the callback invoked with *no* error. ] */
+                  callback(null, {status: 'assigning'});
+                } else {
+                  /*Codes_SRS_NODE_PROVISIONING_AMQP_16_021: [The `queryOperationStatus` method shall call its callback with an error if the transport fails to send the request message.]*/
+                  callback(err);
+                  }
               } else {
                 debug('registration status request sent with correlation_id: ' + requestMessage.correlation_id);
               }
